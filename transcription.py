@@ -2,7 +2,7 @@ from groq import Groq
 import os
 import logging
 import time
-from fastapi import FastAPI, UploadFile, File, HTTPException
+from fastapi import FastAPI, Request
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 # GROQ_API_KEY = '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'
@@ -11,14 +11,17 @@ ai_client = Groq(api_key=GROQ_API_KEY)
 app = FastAPI()
 
 @app.post("/transcribe/")
-async def transcribe_audio(file:UploadFile = File(...)):
+async def transcribe_audio(request: Request):
     start_time = time.time()
     
     try:
-        audio_data = await file.read()
+        audio_data = await request.body()
 
+        if len(audio_data) == 0:
+            return {"error": "No audio data provided"}
+        
         transcription = ai_client.audio.transcriptions.create(
-            file=(file.filename, audio_data),
+            file=("audio.wav", audio_data),
             model="whisper-large-v3",
             temperature=0.0,
             response_format = "json"
@@ -34,7 +37,7 @@ async def transcribe_audio(file:UploadFile = File(...)):
     
     except Exception as e:
         logging.error(f"Error during transcription: {e}")
-        raise HTTPException(status_code=500, detail="Transcription failed")
+        return {"error": "Transcription failed"}
     
 @app.get("/health")
 async def health_check():
