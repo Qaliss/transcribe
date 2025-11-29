@@ -18,7 +18,7 @@ async def transcribe_audio(file:UploadFile = File(...)):
         audio_data = await file.read()
 
         transcription = ai_client.audio.transcriptions.create(
-            file=(file.flename, audio_data),
+            file=(file.filename, audio_data),
             model="whisper-large-v3",
             temperature=0.0,
             response_format = "json"
