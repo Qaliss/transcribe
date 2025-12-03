@@ -10,7 +10,7 @@ ai_client = Groq(api_key=GROQ_API_KEY)
 
 app = FastAPI(redirect_slashes=False)
 
-@app.post("/transcribe/")
+@app.post("/transcribe")
 async def transcribe_audio(request: Request):
     start_time = time.time()
     
