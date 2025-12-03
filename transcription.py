@@ -8,7 +8,7 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 # GROQ_API_KEY = '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'
 ai_client = Groq(api_key=GROQ_API_KEY)
 
-app = FastAPI()
+app = FastAPI(redirect_slashes=False)
 
 @app.post("/transcribe/")
 async def transcribe_audio(request: Request):
